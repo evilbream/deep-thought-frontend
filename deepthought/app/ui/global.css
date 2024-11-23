@@ -276,3 +276,145 @@ body {
   background-color: red;
   color: white;
 }
+
+.container {
+    width: 100vw;
+    height: 100vw;
+    background-color: rgb(0, 0, 0);
+    backdrop-filter: blur(19px) saturate(180%);
+    border-radius: 12px;
+    border: 1px solid rgba(221, 221, 221, 0.39);
+    display: flex;
+  
+}
+
+.chat {
+    flex: 2;
+    border-right: 1px solid rgb(255, 255, 255);
+    display: flex;
+    height: 80%;
+    flex-direction: column;
+    .top{
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgb(255, 255, 255);
+
+        .span {
+            font-size: 18px;
+            font-weight: bold;
+        }
+    }
+    .center {
+        padding: 20px;
+        flex: 1;
+        overflow: scroll;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    
+        .message {
+          max-width: 70%;
+          display: flex;
+          gap: 20px;
+    
+          &.own {
+            align-self: flex-end;
+    
+            .texts {
+              p {
+                background-color: #f7eeee;
+              }
+            }
+          }
+    
+          img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+          .texts {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+    
+            img {
+              width: 100%;
+              height: 300px;
+              border-radius: 10px;
+              object-fit: cover;
+            }
+    
+            p {
+              padding: 20px;
+              background-color: rgba(158, 159, 161, 0.959);
+              border-radius: 10px;
+            }
+    
+            span {
+              font-size: 13px;
+            }
+          }
+        }
+      }
+    .bottom{
+        padding: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: auto;
+        .inp {
+            flex: 1;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 16px;
+
+        }
+
+
+        .SendButton{
+            padding: 10px 20px;
+        }
+    }
+}
+
+.list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.UserProfile {
+    display: flex;
+    padding: 20px;
+    align-items: center;
+
+}
+.TopicList {
+    flex: 1;
+    overflow: scroll;
+    .search {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 20px;
+    }
+    .add{
+        width: 36px;
+        height: 36px;
+        padding: 3;
+        cursor: pointer;
+    }
+
+    .chats {
+        display: flex;
+        align-items: center;
+        gap: 20;
+        cursor: pointer;
+        padding: 30px;
+        border-bottom: 1px solid rgb(255, 255, 255);
+    }
+}

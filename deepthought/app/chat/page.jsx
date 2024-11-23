@@ -1,11 +1,15 @@
 "use client"
-import Chat from "../ui/chat"
+import Chat from "@/app/ui/chat/Chat"
+import List from "@/app/ui/chat/List"
+import Sidenav from "../ui/home/sidenav";
 
 export default function Page(){
     return (
-        <div className="main-content">
-          <p>Chat</p>
-          <Chat />
+      <div>
+        <div className="container">
+          <Chat/>
+          <List/>
+        </div>
         </div>
     );
 }
