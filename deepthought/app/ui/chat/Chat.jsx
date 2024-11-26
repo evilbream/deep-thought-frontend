@@ -7,9 +7,11 @@ import { Stomp, Client } from '@stomp/stompjs';
 export default function Chat(){
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
-    const [client, setClient] = useState(null);
+  const [client, setClient] = useState(null);
+  const [chat, setChat] = useState('');
 
     useEffect(() => {
+      setChat(localStorage.getItem("chat"))
       const stompClient = new Client({
         brokerURL: 'ws://localhost:8080/ws', // Adjust the URL as needed
         onConnect: () => {
@@ -42,7 +44,7 @@ export default function Chat(){
       console.log("message", message)
       if (client && client.connected) {
           console.log("message", message)
-          client.publish({ destination: '/app/broker', body: JSON.stringify({"text": message})});
+          client.publish({ destination: '/app/broker', body: JSON.stringify({"text": message, author: localStorage.getItem("email"), chat: localStorage.getItem("chat")})});
           setMessages((prevMessages) => [...prevMessages, message]);
           setMessage('');
       }
@@ -59,7 +61,8 @@ export default function Chat(){
       <div className="top">
       <div className="topic">
         <div className="caption"></div>
-        <span>Chat 1</span>
+        <span>{chat}</span>
+        <span> Members: {chat}</span>
       </div>
       </div>
       <div className="center">
