@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-
 export default function LoginForm() {
     const [login, setLogin] = useState('');
     const [email, setEmail] = useState('');
@@ -23,6 +22,8 @@ export default function LoginForm() {
                 password
             });
             console.log(response.data);
+            localStorage.setItem('user', response.data)
+            localStorage.setItem('userId', response.data.id)
             localStorage.setItem('login', login);
             localStorage.setItem('email', email);
 

@@ -7,9 +7,7 @@ export default function List(){
   return (
     <div className="list">
         <UserProfile/>
-        <TopicList/>
-        <p> sidenav </p>
-        
+        <TopicList/>        
     </div>
   )
 }

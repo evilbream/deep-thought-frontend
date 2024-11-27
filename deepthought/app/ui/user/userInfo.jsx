@@ -12,7 +12,7 @@ export default function UserProfile(){
 
   return (
     <div className="UserProfile">
-      <p>Signed as: {user.login}</p>
+      <p>Signed as: {user.email}</p>
     </div>
   );
   }
