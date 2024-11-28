@@ -1,7 +1,7 @@
 
 "use client"
 import React, { useEffect } from 'react';
-
+import UserProfile from '@/app/ui/user/userInfo'
 
 export default function ProfilePage() {
   useEffect(() => {
@@ -11,7 +11,7 @@ export default function ProfilePage() {
   }, []);
   return (
     <main className="flex items-center justify-center md:h-screen">
-        <p>Hello {localStorage.getItem("email")}</p>
+        <UserProfile/>
     </main>
   );
 }
