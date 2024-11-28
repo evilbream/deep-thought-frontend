@@ -18,16 +18,9 @@ export default function Page(){
     return (
       <div>
         <div className="container">
-        <div className="list">
-          <UserProfile/>
-          <TopicList setCurrentChat={setCurrentChat}/>        
-        </div>
-        <main className="main-content">
-          <Chat chat={currentChat} />
-        </main>
-        <div className="list">
-          <Users chat={currentChat}/>
-        </div>
+          <TopicList setCurrentChat={setCurrentChat}/>       
+        {currentChat && currentChat.id && <Chat chat={currentChat} />}
+        {currentChat && currentChat.id && <Users chat={currentChat} />}
         </div>
       </div>
     );

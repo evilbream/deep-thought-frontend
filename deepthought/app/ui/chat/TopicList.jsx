@@ -32,6 +32,7 @@ export default function TopicList({ setCurrentChat }){
 
   const handleCreateChat = async () => {
     try {
+        if (newChatName != ""){
         const chat = newChatName
         const creator = localStorage.getItem('email')
         const response = await axios.post('http://localhost:8080/api/v1/chat/create', {
@@ -39,7 +40,7 @@ export default function TopicList({ setCurrentChat }){
           creator
         });
         setChats((prevChats) => [...prevChats, response.data]);
-        setNewChatName("")
+        setNewChatName("")}
     } catch (error) {
         console.log('Failed to create chat. Please try again.', error.response ? error.response.data : error.message);
         setError(error.response ? error.response.data : error.message);
@@ -48,9 +49,10 @@ export default function TopicList({ setCurrentChat }){
 
 const handleAddUser = async () => {
   try {
-    if (curChat.id){
+    if (curChat.id && addUser != ""){
       const response = await axios.post(`http://localhost:8080/api/v1/chat/add?email=${addUser}&chatID=${curChat.id}`);
       console.log(response.data);
+      setAddUser("")
     }
     else{
       console.log("choose chat before adding user")
@@ -67,38 +69,50 @@ const handleAddUser = async () => {
     console.log("Current User Chat", current_chat.title)
 
   }
+  const handleKeyDownChat = (e) => {
+    if (e.key === "Enter" ){
+      handleCreateChat()
+    }
+};
+const handleKeyDownUser = (e) => {
+  if (e.key === "Enter" ){
+    handleAddUser()
+  }
+};
 
   return (
     <div className="TopicList">
+      <p className="top_text">Signed as {localStorage.getItem("email")}</p>
       <div className="search">
-        <input
-          className="styled-input"
-          placeholder='Enter user email'
-          value={addUser}
-          onChange={(e) => setAddUser(e.target.value)}
-        />
-        <button
-          className="styled-button"
-          onClick={handleAddUser}
-        >
-          Add User
-        </button>
-        <input
-          className="styled-input"
+      <input
           placeholder='Enter chat name'
           value={newChatName}
           onChange={(e) => setNewChatName(e.target.value)}
+          onKeyDown={handleKeyDownChat}
         />
-        <button
-          className="styled-button"
-          onClick={handleCreateChat}
-        >
+        <button onClick={handleCreateChat}>
           Create Chat
         </button>
+        {curChat.id && ( 
+          <div className="search">
+        <input
+          placeholder='Enter user email'
+          value={addUser}
+          onChange={(e) => setAddUser(e.target.value)}
+          onKeyDown={handleKeyDownUser}
+        />
+        <button onClick={handleAddUser}>
+          Add User
+        </button>
+        </div>
+        )}
+        {!curChat.id && ( 
+          <p className="top_text1">Choose or create chat to start messaging</p>
+          )}
       </div>
-      <p>Chats:</p>
+      <p className="top_text">Chats:</p>
       {chats.map((chat) => (
-        <div key={chat.id} className="chats">
+        <div key={chat.id} className="item">
           <button onClick={() => chooseChat(chat)}>{chat.title}</button>
         </div>
       ))}

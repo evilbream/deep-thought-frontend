@@ -4,15 +4,18 @@ import React from "react"
 import { useState, useEffect, useRef} from "react"
 import { Stomp, Client } from '@stomp/stompjs';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid'; // Импорт библиотеки uuid
 
 export default function Chat({chat}){
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [client, setClient] = useState(null);
-  const [numUsers, setNumUsers] = useState(1);
+  const [numUsers, setNumUsers] = useState(0);
   const [user, setUser] = useState({id: "", email: ""})
+  const [prevMes, setPrevMes] = useState({id: "", email: ""})
   const messagesEndRef = useRef(null);
     useEffect(() => {
+      setMessage([])
       const fetchNumUsers = async () => {
         try {
           const response = await axios.get(`http://localhost:8080/api/v1/chat/members/count?id=${chat.id}`); // Adjust the URL as needed
@@ -56,7 +59,12 @@ export default function Chat({chat}){
             console.log('Connected to WebSocket');
             stompClient.subscribe(`/user/messages/${chat.id}`, (message) => {
               const receivedMessage = JSON.parse(message.body);
-              setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+              setMessages((prevMessages) => {
+                const uniqueMessages = new Map(prevMessages.map(msg => [msg.id, msg]));
+                uniqueMessages.set(receivedMessage.id, receivedMessage);
+                const sortedMessages = Array.from(uniqueMessages.values()).sort((a, b) => new Date(a.postedAt) - new Date(b.postedAt));
+                return sortedMessages;
+              });
             });
         },
         onStompError: (frame) => {
@@ -84,10 +92,11 @@ export default function Chat({chat}){
 
     const sendMessage = () => {
       if (client && client.connected) {
-          const mes = {text: message, email: user.email, chat: chat.id, id:null}
+          const mes = {text: message, email: user.email, chat: chat.id, id: uuidv4()}
           console.log(messages)
           client.publish({ destination: '/app/broker', body: JSON.stringify(mes)});
-          //setMessages((prevMessages) => [...prevMessages, mes]); // temp solution
+          
+          // setMessages((prevMessages) => [...prevMessages, mes]); // temp solution
           setMessage('');
       }
   };
@@ -98,26 +107,43 @@ export default function Chat({chat}){
     }
 };
 
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleDateString();
+  };
+
+  const formatTime = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
   return (
     <div className="chat">
       <div className="top">
       <div className="topic">
         <div className="caption">
-        <span>Chat: {chat.title}</span>
+        <p className="top_text">{chat.title}</p>
         </div>
-        <span> Members: {numUsers}</span>
+        <span className="spanText"> Members: {numUsers}</span>
       </div>
       </div>
       <div className="center">
-      {messages.map((msg, index) => (
-          <div key={index} className="message">
-            <div className="texts">
-            <span>From: {msg.email}</span>
-            <p >{msg.text}</p>
-              <span>Just now</span>
-            </div>
+      {messages.map((msg, index) => {
+          const showDate = index === 0 || formatDate(messages[index - 1].postedAt) !== formatDate(msg.postedAt);
+          return (
+            <React.Fragment key={index}>
+              {showDate && <div className="date-label">{formatDate(msg.postedAt)}</div>}
+              <div key={index} className={msg.email === user.email ? 'message-outgoing' : 'message'}>
+                <div className="texts"> 
+                {msg.email != user.email && <span>{msg.email}</span>}
+                <p >{msg.text}</p>
+                  <span>{formatTime(msg.postedAt)}</span>
+                </div>
           </div>
-        ))}
+            </React.Fragment>
+          );
+        })}
+      
       <div ref={messagesEndRef} />
       </div>
       <div className="bottom">
