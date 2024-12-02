@@ -117,6 +117,15 @@ export default function Chat({chat}){
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  const copyChatLink = () => {
+    const chatLink = `chat/${chat.id}`;
+    navigator.clipboard.writeText(chatLink).then(() => {
+      alert('Chat link copied to clipboard!');
+    }).catch((error) => {
+      console.error('Failed to copy chat link:', error);
+    });
+  };
+
   return (
     <div className="chat">
       <div className="top">
@@ -124,7 +133,9 @@ export default function Chat({chat}){
         <div className="caption">
         <p className="top_text">{chat.title}</p>
         </div>
-        <span className="spanText"> Members: {numUsers}</span>
+        <div className="copyLink">
+        <span className="spanText"> Members: {numUsers}</span></div>
+        <div className="copyLink btn_marg"><button className="btn" onClick={copyChatLink}>Copy Link</button></div>
       </div>
       </div>
       <div className="center">

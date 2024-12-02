@@ -10,7 +10,7 @@ function SignupPage() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleSignup = async () => {
+    const handleSignup = async (e) => {
         try {
             if (!login || !email || !password) {
                 setError('Please fill in all fields.');
@@ -26,7 +26,13 @@ function SignupPage() {
                 email,
                 password
             });
+            localStorage.setItem('user', response.data)
+            localStorage.setItem('userId', response.data.id)
+            localStorage.setItem('login', login);
+            localStorage.setItem('email', email);
             console.log(response.data);
+            e.preventDefault();
+            window.location.href = '/chat';
         } catch (error) {
             console.log('Signup failed:', error.response ? error.response.data : error.message);
             setError(error.response ? error.response.data : error.message);

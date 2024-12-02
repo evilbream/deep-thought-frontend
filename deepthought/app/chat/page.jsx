@@ -8,12 +8,19 @@ import Users from '../ui/chat/Users';
 
 export default function Page(){
   const [currentChat, setCurrentChat] = useState({});
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     if (!localStorage.getItem("email")) {
-        window.location.href = '/login';; // Redirect to login page if not authenticated
+        window.location.href = '/login';
+    }
+    else{
+      setLoading(false)
     }
   }, []);
 
+  if (loading) {
+    return <div>Loading...</div>; 
+  }
 
     return (
       <div>

@@ -32,15 +32,24 @@ export default function TopicList({ setCurrentChat }){
 
   const handleCreateChat = async () => {
     try {
-        if (newChatName != ""){
-        const chat = newChatName
-        const creator = localStorage.getItem('email')
-        const response = await axios.post('http://localhost:8080/api/v1/chat/create', {
-          chat,
-          creator
-        });
-        setChats((prevChats) => [...prevChats, response.data]);
-        setNewChatName("")}
+        if (newChatName.indexOf('chat/')>-1){
+          const joinedUser = localStorage.getItem('email')
+          const chatId = newChatName.split('/')[1]
+          const response = await axios.post(`http://localhost:8080/api/v1/chat/add?email=${joinedUser}&chatID=${chatId}`);
+          console.log(response.data);
+          setChats((prevChats) => [...prevChats, response.data.chat]);
+          setNewChatName("")
+        } 
+        else if (newChatName != ""){
+          const chat = newChatName
+          const creator = localStorage.getItem('email')
+          const response = await axios.post('http://localhost:8080/api/v1/chat/create', {
+            chat,
+            creator
+          });
+          setChats((prevChats) => [...prevChats, response.data]);
+          setNewChatName("")
+      }
     } catch (error) {
         console.log('Failed to create chat. Please try again.', error.response ? error.response.data : error.message);
         setError(error.response ? error.response.data : error.message);
@@ -74,24 +83,24 @@ const handleAddUser = async () => {
       handleCreateChat()
     }
 };
-const handleKeyDownUser = (e) => {
-  if (e.key === "Enter" ){
-    handleAddUser()
-  }
-};
+  const handleKeyDownUser = (e) => {
+    if (e.key === "Enter" ){
+      handleAddUser()
+    }
+  };
 
   return (
     <div className="TopicList">
       <p className="top_text">Signed as {localStorage.getItem("email")}</p>
       <div className="search">
       <input
-          placeholder='Enter chat name'
+          placeholder='Enter chat name or link'
           value={newChatName}
           onChange={(e) => setNewChatName(e.target.value)}
           onKeyDown={handleKeyDownChat}
         />
-        <button onClick={handleCreateChat}>
-          Create Chat
+        <button className="btn" onClick={handleCreateChat}>
+          Create/Join
         </button>
         {curChat.id && ( 
           <div className="search">
@@ -101,13 +110,13 @@ const handleKeyDownUser = (e) => {
           onChange={(e) => setAddUser(e.target.value)}
           onKeyDown={handleKeyDownUser}
         />
-        <button onClick={handleAddUser}>
+        <button className="btn" onClick={handleAddUser}>
           Add User
         </button>
         </div>
         )}
         {!curChat.id && ( 
-          <p className="top_text1">Choose or create chat to start messaging</p>
+          <p className="top_text1">Choose, create or join chat to start messaging</p>
           )}
       </div>
       <p className="top_text">Chats:</p>

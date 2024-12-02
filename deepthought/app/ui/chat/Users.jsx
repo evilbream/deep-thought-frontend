@@ -60,14 +60,14 @@ export default function Users({ chat }) {
 
   return (
     <div className='members'>
-      <button className="classic-button" onClick={toggleUsersOpen}>Users</button>
+      <button className="btn" style={{width: '70px'}} onClick={toggleUsersOpen}>Users</button>
       {usersOpen && (
         <div className='TopicList'>
           {users.map((user) => (
             <div key={user.user.id} className="user-item">
               <span>{user.user.email}</span>
-              {(member.chatRole === "CHAT_ADMIN" && member.user.email != user.user.email) && <button className="classic-button small-text" onClick={() => handleDeleteUser(user.email)}>Remove</button>}
-              {(member.user.email == user.user.email) && <button className="classic-button small-text" onClick={() => handleDeleteUser(user.user.email)}>Leave</button>}
+              {(member.chatRole === "CHAT_ADMIN" && member.user.email != user.user.email) && <button onClick={() => handleDeleteUser(user.email)}>Remove</button>}
+              {(member.user.email == user.user.email) && <button onClick={() => handleDeleteUser(user.user.email)}>Leave</button>}
             </div>
           ))}
         </div>
