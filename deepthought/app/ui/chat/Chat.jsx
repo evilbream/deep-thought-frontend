@@ -18,7 +18,12 @@ export default function Chat({chat}){
       setMessage([])
       const fetchNumUsers = async () => {
         try {
-          const response = await axios.get(`http://localhost:8080/api/v1/chat/members/count?id=${chat.id}`); // Adjust the URL as needed
+          const response = await axios.get(`http://localhost:8080/api/v1/chat/members/count?id=${chat.id}`,
+            {auth: {
+              username: localStorage.getItem('login'),
+              password: localStorage.getItem('password')
+        }}
+          ); 
           setNumUsers(response.data);
         } catch (error) {
           console.log('Failed to fetch number of users:', error);
@@ -27,7 +32,11 @@ export default function Chat({chat}){
 
       const fetchUser = async () => {
         try {
-          const response = await axios.get(`http://localhost:8080/api/v1/user/find?email=${localStorage.getItem("email")}`); // Adjust the URL as needed
+          const response = await axios.get(`http://localhost:8080/api/v1/user/find?email=${localStorage.getItem("email")}`,
+          {auth: {
+            username: localStorage.getItem('login'),
+            password: localStorage.getItem('password')
+      }}); 
           setUser(response.data);
         } catch (error) {
           console.log('Failed to fetch number of users:', error);
@@ -39,7 +48,12 @@ export default function Chat({chat}){
 
       const fetchOldMessages = async () =>{
         try {
-          const response = await axios.get(`http://localhost:8080/api/v1/message/all?chatId=${chat.id}`); // Adjust the URL as needed
+          const response = await axios.get(`http://localhost:8080/api/v1/message/all?chatId=${chat.id}`,
+            {auth: {
+              username: localStorage.getItem('login'),
+              password: localStorage.getItem('password')
+        }}
+          ); 
           console.log(response.data)
           setMessages(response.data);
         } catch (error) {
@@ -51,13 +65,20 @@ export default function Chat({chat}){
         fetchNumUsers();
         fetchOldMessages();
       }
-
-
+      const username = localStorage.getItem('login');
+      const email = localStorage.getItem('email');
+      const password = localStorage.getItem('password');
+      const encodedCredentials = btoa(`${username}:${password}`);
       const stompClient = new Client({
-        brokerURL: 'ws://localhost:8080/ws', // Adjust the URL as needed
+        brokerURL: `ws://localhost:8080/ws`,
+        connectHeaders: {
+          login: 'test',
+          passcode: 'test'
+      },
+        
         onConnect: () => {
             console.log('Connected to WebSocket');
-            stompClient.subscribe(`/user/messages/${chat.id}`, (message) => {
+            stompClient.subscribe(`/user/messages/${chat.id}`,  (message) => {
               const receivedMessage = JSON.parse(message.body);
               setMessages((prevMessages) => {
                 const uniqueMessages = new Map(prevMessages.map(msg => [msg.id, msg]));
@@ -65,7 +86,8 @@ export default function Chat({chat}){
                 const sortedMessages = Array.from(uniqueMessages.values()).sort((a, b) => new Date(a.postedAt) - new Date(b.postedAt));
                 return sortedMessages;
               });
-            });
+            }, {Username: 'test',
+              Password: 'test'});
         },
         onStompError: (frame) => {
             console.error('Broker reported error: ' + frame.headers['message']);
@@ -133,8 +155,6 @@ export default function Chat({chat}){
         <div className="caption">
         <p className="top_text">{chat.title}</p>
         </div>
-        <div className="copyLink">
-        <span className="spanText"> Members: {numUsers}</span></div>
         <div className="copyLink btn_marg"><button className="btn" onClick={copyChatLink}>Copy Link</button></div>
       </div>
       </div>

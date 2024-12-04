@@ -2,21 +2,29 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import {useUser} from '@/app/ui/user/UserContext'
 
-export default function TopicList({ setCurrentChat }){
+
+export default function TopicList({ setCurrentChat, chat }){
   const [addChat, setAddChat] = useState(false)
   const [addUser, setAddUser] = useState('')
   const [chats, setChats] = useState([]);
   const [error, setError] = useState('');
   const [newChatName, setNewChatName] = useState('');
-  const [user, setUser] = useState({ login: '', email: '' });
   const [curChat, setCurChat] = useState({})
+  const {user} = useUser();
+  const [userData, setUserData] = useState({})
+
 
   useEffect(() => {
-    setUser(localStorage.getItem('user'))
+    console.log("login", user.login)
     const fetchChats = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/v1/chat/all?email=${localStorage.getItem('email')}`); 
+        const response = await axios.get(`http://localhost:8080/api/v1/chat/all?email=${localStorage.getItem('email')}`,
+        {auth: {
+          username: localStorage.getItem('login'),
+          password: localStorage.getItem('password')
+    }},); 
         //setChats(response.data);
         const uniqueChats = new Map(response.data.map(chat => [chat.id, chat]));
         setChats(Array.from(uniqueChats.values()));
@@ -35,7 +43,12 @@ export default function TopicList({ setCurrentChat }){
         if (newChatName.indexOf('chat/')>-1){
           const joinedUser = localStorage.getItem('email')
           const chatId = newChatName.split('/')[1]
-          const response = await axios.post(`http://localhost:8080/api/v1/chat/add?email=${joinedUser}&chatID=${chatId}`);
+          const response = await axios.post(`http://localhost:8080/api/v1/chat/add?email=${joinedUser}&chatID=${chatId}`,
+            {auth: {
+              username: localStorage.getItem('login'),
+              password: localStorage.getItem('password')
+        }}
+          );
           console.log(response.data);
           setChats((prevChats) => [...prevChats, response.data.chat]);
           setNewChatName("")
@@ -46,7 +59,11 @@ export default function TopicList({ setCurrentChat }){
           const response = await axios.post('http://localhost:8080/api/v1/chat/create', {
             chat,
             creator
-          });
+          }, 
+          {auth: {
+            username: localStorage.getItem('login'),
+            password: localStorage.getItem('password')
+      }});
           setChats((prevChats) => [...prevChats, response.data]);
           setNewChatName("")
       }
@@ -59,7 +76,12 @@ export default function TopicList({ setCurrentChat }){
 const handleAddUser = async () => {
   try {
     if (curChat.id && addUser != ""){
-      const response = await axios.post(`http://localhost:8080/api/v1/chat/add?email=${addUser}&chatID=${curChat.id}`);
+      const response = await axios.post(`http://localhost:8080/api/v1/chat/add?email=${addUser}&chatID=${curChat.id}`,
+        {auth: {
+          username: localStorage.getItem('login'),
+          password: localStorage.getItem('password')
+    }}
+      );
       console.log(response.data);
       setAddUser("")
     }

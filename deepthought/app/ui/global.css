@@ -543,3 +543,21 @@ body {
 .edit-form textarea {
   resize: vertical;
 }
+
+.styled-input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 15px; 
+}
+
+.login-container {
+  width: 400px;
+  padding: 30px;
+  background-color: #000000;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}

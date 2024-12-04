@@ -59,7 +59,6 @@ export default function UserProfile(){
       <div className="profile-header">
         <h2 className="profile-name">{user.profile?.firstName} {user.profile?.middleName} {user.profile?.lastName}</h2>
         <p className="profile-email">@{user.login}</p>
-        <p className="profile-email">{user.email}</p>
       </div>
       <div className="profile-body">
         {editMode ? (
@@ -119,6 +118,7 @@ export default function UserProfile(){
           </div>
         ) : (
           <div className="profile-info">
+            <p><strong>Email:</strong> {user.email}</p>
             <p><strong>About:</strong> {user.profile?.about}</p>
             <p><strong>Status:</strong> {user.profile?.status}</p>
             <button className="btn edit-btn" onClick={() => setEditMode(true)}>Edit Profile</button>

@@ -6,6 +6,7 @@ import UserProfile from "@/app/ui/user/userInfo"
 import TopicList from "@/app/ui/chat/TopicList"
 import Users from '../ui/chat/Users';
 
+
 export default function Page(){
   const [currentChat, setCurrentChat] = useState({});
   const [loading, setLoading] = useState(true);
@@ -25,9 +26,9 @@ export default function Page(){
     return (
       <div>
         <div className="container">
-          <TopicList setCurrentChat={setCurrentChat}/>       
+          <TopicList setCurrentChat={setCurrentChat} chat={currentChat}/>       
         {currentChat && currentChat.id && <Chat chat={currentChat} />}
-        {currentChat && currentChat.id && <Users chat={currentChat} />}
+        {currentChat && currentChat.id && <Users chat={currentChat} setCurrentChat={setCurrentChat}/>}
         </div>
       </div>
     );
