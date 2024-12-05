@@ -55,7 +55,8 @@ export default function Chat({chat}){
         }}
           ); 
           console.log(response.data)
-          setMessages(response.data);
+          const sortedMessages = Array.from(response.data.values()).sort((a, b) => new Date(a.postedAt) - new Date(b.postedAt));
+          setMessages(sortedMessages);
         } catch (error) {
           console.log('Failed to fetch messages:', error);
         }
